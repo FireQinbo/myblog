@@ -19,6 +19,7 @@
         <druid.version>1.1.22</druid.version>
         <mysql-connector-java.version>8.0.21</mysql-connector-java.version>
         <spring.shiro.version>1.6.0</spring.shiro.version>
+        <dynamic-datasource-spring-boot-starter.version>3.2.0</dynamic-datasource-spring-boot-starter.version>
     </properties>
     <dependencies>
         <dependency>
@@ -107,6 +108,13 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>${druid.version}</version>
+        </dependency>
+
+        <!-- 动态数据源 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+            <version>${dynamic-datasource-spring-boot-starter.version}</version>
         </dependency>
 
         <!--swagger-->
