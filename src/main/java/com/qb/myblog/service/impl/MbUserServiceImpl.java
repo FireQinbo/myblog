@@ -1,6 +1,9 @@
 package com.qb.myblog.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qb.myblog.entity.MbPermission;
 import com.qb.myblog.entity.MbUser;
+import com.qb.myblog.mapper.MbPermissionMapper;
 import com.qb.myblog.mapper.MbUserMapper;
 import com.qb.myblog.service.IMbUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,7 @@ import java.util.List;
  * @date 2021/4/2 15:57
  */
 @Service
-public class MbUserServiceImpl implements IMbUserService {
+public class MbUserServiceImpl extends ServiceImpl<MbUserMapper, MbUser> implements IMbUserService {
     @Autowired
     private MbUserMapper mbUserMapper;
 

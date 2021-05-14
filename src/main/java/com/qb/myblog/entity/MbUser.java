@@ -3,6 +3,7 @@ package com.qb.myblog.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author qinb
@@ -15,4 +16,9 @@ public class MbUser implements Serializable {
     private String password;
     private String mobile;
     private String salt;
+
+    private Date createTime;
+    private String createBy;
+    private Date updateTime;
+    private String updateBy;
 }

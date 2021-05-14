@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qb.myblog.mapper.MbRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.qb.myblog.entity.MbRole">
+        <id column="id" property="id" />
+        <result column="role_name" property="roleName" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, role_name, create_time, create_by, update_time, update_by
+    </sql>
+    <!--获取用户所拥有角色-->
+    <select id="getUserRoles" resultType="java.lang.String">
+        SELECT
+            t.role_code
+        FROM
+            mb_role t
+        WHERE
+                t.id IN ( SELECT a.id FROM mb_user_role a LEFT JOIN mb_user b ON a.user_id = b.id WHERE b.id = #{userId} )
+    </select>
+
+</mapper>

@@ -1,7 +1,13 @@
 server:
   servlet:
     context-path: /myblog
-  port: 8899
+  port: 8443
+  httpPort: 8899
+  #SSL证书配置（本地）
+  ssl:
+    key-store: classpath:seek.keystore
+    key-store-password: 123456
+    key-store-type: JKS
 
 spring:
   datasource:

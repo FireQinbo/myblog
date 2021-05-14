@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2021/4/6 18:01
  */
 @Data
-@ApiModel(value="接口返回对象",description = "接口返回对象")
+@ApiModel(value = "接口返回对象", description = "接口返回对象")
 public class ResultVo<T> implements Serializable {
     /**
      * 成功标志
@@ -39,6 +39,7 @@ public class ResultVo<T> implements Serializable {
 
     /**
      * 返回成功数据
+     *
      * @param message
      * @param t
      * @return
@@ -53,6 +54,7 @@ public class ResultVo<T> implements Serializable {
 
     /**
      * 返回失败数据
+     *
      * @param message
      * @param t
      * @return
