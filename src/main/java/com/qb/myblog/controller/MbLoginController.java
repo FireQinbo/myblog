@@ -49,7 +49,7 @@ public class MbLoginController {
         try {
             subject.login(usernamePasswordToken);
             //redis存储token 一小时失效
-            redisUtil.set(CommonConstant.PREFIX_TOKEN + usernamePasswordToken, usernamePasswordToken, 3600 * 60);
+            redisUtil.set(CommonConstant.PREFIX_TOKEN + usernamePasswordToken, usernamePasswordToken, 3600);
             resultVo.success("登录成功！", null);
         } catch (UnknownAccountException e) {
             resultVo.failure("用户不存在！", null);

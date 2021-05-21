@@ -1,17 +1,21 @@
 package com.qb.myblog.config;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.qb.myblog.constant.CommonConstant;
 import com.qb.myblog.entity.MbUser;
 import com.qb.myblog.service.IMbPermissionService;
 import com.qb.myblog.service.IMbRoleService;
 import com.qb.myblog.service.IMbUserService;
 import com.qb.myblog.utils.JWTUtil;
+import com.qb.myblog.utils.RedisUtil;
 import com.qb.myblog.utils.SpringContextUtils;
 import com.qb.myblog.vo.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -38,6 +42,9 @@ public class MyRealm extends AuthorizingRealm {
 
     @Autowired
     private IMbPermissionService mbPermissionService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
 
     /**
@@ -84,16 +91,71 @@ public class MyRealm extends AuthorizingRealm {
         //比如jeecg-boot系统有自己的sys_user，登录系统
         //但是我们还需要自己的mb_user，来登录自己的系统，这时候就需要通过url来判断需要拦截访问哪个系统的user
         //通过LoginUser对象，做统一管理登录对象
-        LoginUser loginUser;
+        LoginUser loginUser = null;
         if (SpringContextUtils.getHttpServletRequest().getRequestURI().contains("/mb/")) {
             //验证登录用户有效性
-//            loginUser =
+            loginUser = checkUserTokenEffect(token);
         }
 
-        return null;
+        return new SimpleAuthenticationInfo(loginUser, token, getName());
     }
 
+    /**
+     * 验证登录用户有效性
+     * @param token
+     * @return
+     * @throws AuthenticationException
+     */
     private LoginUser checkUserTokenEffect(String token) throws AuthenticationException {
-        return null;
+        String mobile = JWTUtil.getUsername(token);
+        if (mobile == null) {
+            throw new AuthenticationException("token非法无效！");
+        }
+
+        LoginUser loginUser = mbUserService.createLoginUser(mobile);
+        //判断用户是否存在
+        if (loginUser == null) {
+            throw new AuthenticationException("用户不存在！");
+        }
+
+        //判断用户状态（使用可用 -- 待完善）
+
+
+        //验证token是否超时，延时token保证用户在线操作不掉线
+
+        if (!jwtTokenRefresh(token, loginUser.getMobile(), loginUser.getPassword())) {
+            throw new AuthenticationException("token失效，请重新登录！");
+        }
+        return loginUser;
+    }
+
+    /**
+     * JWTToken刷新生命周期 （实现： 用户在线操作不掉线功能）
+     * 1、登录成功后将用户的JWT生成的Token作为k、v存储到cache缓存里面(这时候k、v值一样)，缓存有效期设置为Jwt有效时间的2倍
+     * 2、当该用户再次请求时，通过JWTFilter层层校验之后会进入到doGetAuthenticationInfo进行身份验证
+     * 3、当该用户这次请求jwt生成的token值已经超时，但该token对应cache中的k还是存在，则表示该用户一直在操作只是JWT的token失效了，程序会给token对应的k映射的v值重新生成JWTToken并覆盖v值，该缓存生命周期重新计算
+     * 4、当该用户这次请求jwt在生成的token值已经超时，并在cache中不存在对应的k，则表示该用户账户空闲超时，返回用户信息已失效，请重新登录。
+     * 注意： 前端请求Header中设置Authorization保持不变，校验有效性以缓存中的token为准。
+     * 用户过期时间 = Jwt有效时间 * 2。
+     * @param token
+     * @param userName
+     * @param password
+     * @return
+     */
+    private boolean jwtTokenRefresh(String token, String userName, String password) {
+        String redisToken = redisUtil.get(CommonConstant.PREFIX_TOKEN + token).toString();
+
+        if (StrUtil.isNotEmpty(redisToken)) {
+            //如果JWTToken已过期，则重新设置token缓存
+            if (!JWTUtil.verify(token, userName, password)) {
+                String newToken = JWTUtil.sign(userName, password);
+                //设置token缓存一小时失效
+                redisUtil.set(CommonConstant.PREFIX_TOKEN + newToken, newToken,3600);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
