@@ -6,6 +6,8 @@ import com.qb.myblog.service.IMbPermissionService;
 import com.qb.myblog.service.IMbRoleService;
 import com.qb.myblog.service.IMbUserService;
 import com.qb.myblog.utils.JWTUtil;
+import com.qb.myblog.utils.SpringContextUtils;
+import com.qb.myblog.vo.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -16,6 +18,9 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author qinb
@@ -53,10 +58,12 @@ public class MyRealm extends AuthorizingRealm {
         String username = JWTUtil.getUsername(principalCollection.toString());
         MbUser mbUser = mbUserService.getOne(new LambdaQueryWrapper<MbUser>().eq(MbUser::getUserName, username));
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        //添加角色集合
-        info.addRoles(mbRoleService.getUserRoles(mbUser.getId()));
-        //添加权限集合
-        info.addStringPermissions(mbPermissionService.getRolePermissions(mbUser.getId()));
+        //添加角色集合 - Set去重
+        Set<String> roles = new HashSet<>(mbRoleService.getUserRoles(mbUser.getId()));
+        info.addRoles(roles);
+        //添加权限集合 - Set去重
+        Set<String> permissions = new HashSet<>(mbPermissionService.getRolePermissions(mbUser.getId()));
+        info.addStringPermissions(permissions);
         return info;
     }
 
@@ -68,6 +75,25 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        //获取登录token
+        String token = (String) authenticationToken.getCredentials();
+        if (token == null) {
+            throw new AuthenticationException("token为空!");
+        }
+        //这里可以通过url地址判断，来针对不同url做访问控制
+        //比如jeecg-boot系统有自己的sys_user，登录系统
+        //但是我们还需要自己的mb_user，来登录自己的系统，这时候就需要通过url来判断需要拦截访问哪个系统的user
+        //通过LoginUser对象，做统一管理登录对象
+        LoginUser loginUser;
+        if (SpringContextUtils.getHttpServletRequest().getRequestURI().contains("/mb/")) {
+            //验证登录用户有效性
+//            loginUser =
+        }
+
+        return null;
+    }
+
+    private LoginUser checkUserTokenEffect(String token) throws AuthenticationException {
         return null;
     }
 }

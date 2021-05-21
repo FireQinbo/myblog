@@ -14,4 +14,11 @@ import java.util.List;
  */
 public interface IMbUserService extends IService<MbUser> {
     List<MbUser> getAllMbUser();
+
+    /**
+     * 注册用户
+     * @param mbUser
+     * @throws Exception
+     */
+    void register(MbUser mbUser) throws Exception;
 }

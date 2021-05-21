@@ -12,8 +12,8 @@ server:
 spring:
   datasource:
     username: root
-    password: root123
-    url: jdbc:mysql://192.168.137.123:3306/myblog?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai
+    password: '@Qinbo.1314520'
+    url: jdbc:mysql://113.31.124.33:3306/myblog?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     #备注
@@ -45,9 +45,9 @@ spring:
 
   redis:
       database: 0
-      host: 192.168.137.123
+      host: 113.31.124.33
       port: 6379
-      password: root123
+      password:
       lettuce:
         pool:
           max-active: 8

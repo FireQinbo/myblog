@@ -24,4 +24,15 @@ public class MbUserServiceImpl extends ServiceImpl<MbUserMapper, MbUser> impleme
     public List<MbUser> getAllMbUser() {
         return mbUserMapper.getAllMbUser();
     }
+
+    /**
+     * 注册用户
+     *
+     * @param mbUser
+     * @throws Exception
+     */
+    @Override
+    public void register(MbUser mbUser) throws Exception {
+        mbUserMapper.insert(mbUser);
+    }
 }
