@@ -60,7 +60,7 @@ spring:
     port: 5672
     username: admin
     password: admin
-#mybatis plus ????
+#mybatis plus
 mybatis-plus:
   mapper-locations: classpath:com/qb/myblog/mapper/xml/*Mapper.xml
   global-config:

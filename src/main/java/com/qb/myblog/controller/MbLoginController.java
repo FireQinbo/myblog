@@ -4,6 +4,7 @@ import com.qb.myblog.constant.CommonConstant;
 import com.qb.myblog.dto.MbUserDto;
 import com.qb.myblog.entity.MbUser;
 import com.qb.myblog.service.IMbUserService;
+import com.qb.myblog.utils.JWTUtil;
 import com.qb.myblog.utils.RedisUtil;
 import com.qb.myblog.vo.ResultVo;
 import io.swagger.annotations.Api;
@@ -13,6 +14,9 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
@@ -42,21 +46,25 @@ public class MbLoginController {
     @GetMapping("/login")
     public ResultVo<Object> login(@Valid @RequestBody MbUserDto mbUserDto) {
         ResultVo<Object> resultVo = new ResultVo<>();
-        //获取登录subject
-        Subject subject = SecurityUtils.getSubject();
-        //根据用户名 密码创建token
-        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(mbUserDto.getUserName(), mbUserDto.getPassword());
-        try {
-            subject.login(usernamePasswordToken);
-            //redis存储token 一小时失效
-            redisUtil.set(CommonConstant.PREFIX_TOKEN + usernamePasswordToken, usernamePasswordToken, 3600);
-            resultVo.success("登录成功！", null);
-        } catch (UnknownAccountException e) {
+        MbUser mbUser = mbUserService.getMbUserByMobile(mbUserDto.getMobile());
+        if (mbUser == null) {
             resultVo.failure("用户不存在！", null);
-        } catch (IncorrectCredentialsException e) {
+            return resultVo;
+        }
+        //设置hash算法迭代次数
+        int times = 2;
+        String checkPwd = new SimpleHash("md5", mbUserDto.getPassword(), mbUser.getSalt(), times).toString();
+        if (!checkPwd.equals(mbUser.getPassword())) {
             resultVo.failure("密码错误！", null);
+            return resultVo;
         }
 
+        //获取token
+        String token = JWTUtil.sign(mbUserDto.getMobile(), mbUser.getPassword());
+        //缓存token 一小时后失效
+        redisUtil.set(CommonConstant.PREFIX_TOKEN + token, token, 3600);
+
+        resultVo.success("登录成功！", token);
         return resultVo;
     }
 
@@ -64,6 +72,11 @@ public class MbLoginController {
     @PostMapping("/register")
     public ResultVo<Object> register(@Valid @RequestBody MbUserDto mbUserDto) {
         ResultVo<Object> resultVo = new ResultVo<>();
+        MbUser mbUserDb = mbUserService.getMbUserByMobile(mbUserDto.getMobile());
+        if (mbUserDb != null) {
+            resultVo.failure("该手机号已注册！", null);
+            return resultVo;
+        }
 
         //利用shiro自带的SecureRandomNumberGenerator 生成盐值，默认16位
         String salt = new SecureRandomNumberGenerator().nextBytes().toString();
@@ -84,6 +97,36 @@ public class MbLoginController {
         } catch (Exception e) {
             resultVo.failure("注册失败！", e.getMessage());
         }
+
+        return resultVo;
+    }
+
+
+    /**
+     * 测试角色权限接口
+     * @return
+     */
+    @RequiresRoles(value = {"admin"})
+    @GetMapping("/testRole")
+    public ResultVo<Object> testRole() {
+        ResultVo<Object> resultVo = new ResultVo<>();
+
+        resultVo.success("进入成功！", null);
+
+        return resultVo;
+    }
+
+    /**
+     * 测试菜单权限接口
+     * 说明：logical = Logical.OR （登录角色包含admin:add，admin:select，admin:viwe其中一个就可以通过认证）
+     * @return
+     */
+    @RequiresPermissions(value = {"admin:add","admin:select","admin:viwe"},logical = Logical.OR)
+    @GetMapping("/testPermission")
+    public ResultVo<Object> testPermission() {
+        ResultVo<Object> resultVo = new ResultVo<>();
+
+        resultVo.success("进入成功！", null);
 
         return resultVo;
     }

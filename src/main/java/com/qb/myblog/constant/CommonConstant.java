@@ -9,4 +9,6 @@ public interface CommonConstant {
      * redis缓存前缀
      */
     String PREFIX_TOKEN = "prefix_token_";
+
+    String X_ACCESS_TOKEN = "X-Access-Token";
 }

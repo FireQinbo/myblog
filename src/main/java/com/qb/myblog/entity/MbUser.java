@@ -1,6 +1,7 @@
 package com.qb.myblog.entity;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +18,7 @@ public class MbUser implements Serializable {
     private String mobile;
     private String salt;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     private String createBy;
     private Date updateTime;

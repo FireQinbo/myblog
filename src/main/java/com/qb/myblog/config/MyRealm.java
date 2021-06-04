@@ -62,8 +62,8 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String username = JWTUtil.getUsername(principalCollection.toString());
-        MbUser mbUser = mbUserService.getOne(new LambdaQueryWrapper<MbUser>().eq(MbUser::getUserName, username));
+        LoginUser loginUser = (LoginUser) principalCollection.getPrimaryPrincipal();
+        MbUser mbUser = mbUserService.getMbUserByMobile(loginUser.getMobile());
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         //添加角色集合 - Set去重
         Set<String> roles = new HashSet<>(mbRoleService.getUserRoles(mbUser.getId()));

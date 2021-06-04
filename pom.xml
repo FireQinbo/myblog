@@ -20,6 +20,8 @@
         <druid.version>1.1.22</druid.version>
         <mysql-connector-java.version>8.0.21</mysql-connector-java.version>
         <spring.shiro.version>1.6.0</spring.shiro.version>
+        <shiro-redis.version>3.1.0</shiro-redis.version>
+        <commons.version>2.6</commons.version>
         <dynamic-datasource-spring-boot-starter.version>3.2.0</dynamic-datasource-spring-boot-starter.version>
     </properties>
     <dependencies>
@@ -50,6 +52,18 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
             <version>${spring.shiro.version}</version>
+        </dependency>
+        <!-- shiro-redis -->
+        <dependency>
+            <groupId>org.crazycake</groupId>
+            <artifactId>shiro-redis</artifactId>
+            <version>${shiro-redis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.shiro</groupId>
+                    <artifactId>shiro-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--JWT-->
@@ -160,6 +174,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- commons -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.version}</version>
         </dependency>
 
         <dependency>

@@ -58,10 +58,10 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://192.168.137.123:3306/myblog?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai");
+        dsc.setUrl("jdbc:mysql://113.31.124.33:3306/myblog?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("root123");
+        dsc.setPassword("@Qinbo.1314520");
         mpg.setDataSource(dsc);
 
         // 自定义配置
@@ -75,7 +75,7 @@ public class CodeGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
         //  pc.setModuleName(scanner("模块名"));
-        pc.setParent("com.qb.generatorcode");
+        pc.setParent("com.qb.myblog");
         mpg.setPackageInfo(pc);
 
         // 如果模板引擎是 velocity
