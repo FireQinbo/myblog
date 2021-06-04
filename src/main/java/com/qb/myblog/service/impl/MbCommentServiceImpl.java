@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qb.myblog.dto.MbCommentDto;
 import com.qb.myblog.entity.MbComment;
 import com.qb.myblog.mapper.MbCommentMapper;
 import com.qb.myblog.service.IMbCommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +44,17 @@ public class MbCommentServiceImpl extends ServiceImpl<MbCommentMapper, MbComment
         IPage<MbComment> mbCommentPage = mbCommentMapper.selectPage(page, queryWrapper);
 
         return mbCommentPage;
+    }
+
+    /**
+     * 添加评论
+     *
+     * @param mbCommentDto
+     */
+    @Override
+    public void addComment(MbCommentDto mbCommentDto) {
+        MbComment mbComment = new MbComment();
+        BeanUtils.copyProperties(mbCommentDto, mbComment);
+        mbCommentMapper.insert(mbComment);
     }
 }
