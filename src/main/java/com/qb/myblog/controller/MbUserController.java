@@ -26,7 +26,7 @@ import java.util.Map;
  * @author qinb
  * @date 2021/4/2 16:01
  */
-@Api("用户管理API")
+@Api(tags = "用户管理API")
 @RestController
 @RequestMapping(value = "/mb")
 @Validated
@@ -37,31 +37,22 @@ public class MbUserController {
     @Autowired
     private RedisUtil redisUtil;
 
-    @ApiOperation("获取所有用户到Redis中")
+    @ApiOperation(value = "获取所有用户到Redis中")
     @GetMapping(value = "/getAllMbUser")
-    public ResultVo<JSONObject> getAllMbUser() {
-        ResultVo<JSONObject> resultVo = new ResultVo<>();
-        try{
-            redisUtil.set("users", mbUserService.getAllMbUser(),60);
-            resultVo.success("操作成功！", null);
-        }catch (Exception e){
-            resultVo.success("操作失败！", null);
-            e.printStackTrace();
-        }
-        return resultVo;
+    public ResultVo<?> getAllMbUser() {
+        redisUtil.set("users", mbUserService.getAllMbUser(),60);
+        return ResultVo.success("操作成功！", mbUserService.getAllMbUser());
     }
 
     @ApiOperation("从Redis中获取用户")
     @GetMapping(value = "/getMbUsersFromRedis")
-    public ResultVo<Object> getMbUsersFromRedis() {
-        ResultVo<Object> resultVo = new ResultVo<>();
+    public ResultVo<?> getMbUsersFromRedis() {
         try{
-            resultVo.success("操作成功！", (List<MbUser>) redisUtil.get("users"));
+            return ResultVo.success("操作成功！", (List<MbUser>) redisUtil.get("users"));
         }catch (Exception e){
-            resultVo.success("操作失败！", null);
             e.printStackTrace();
+            return ResultVo.success("操作失败！", null);
         }
-        return resultVo;
     }
 
     @ApiOperation("获取微信用户openid")
@@ -84,9 +75,9 @@ public class MbUserController {
     public ResultVo<T> testValid(@Valid @RequestParam("name") @NotEmpty(message = "name不能为空") String name) {
         ResultVo resultVo = new ResultVo();
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("name", name);
-        resultVo.success("操作成功！", map);
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("name", name);
+//        resultVo.success("操作成功！", map);
 
 
         return resultVo;

@@ -62,6 +62,12 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/**/*.woff", "anon");
         filterChainDefinitionMap.put("/**/*.woff2", "anon");
 
+        //swagger接口权限 开放
+        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+        filterChainDefinitionMap.put("/webjars/**", "anon");
+        filterChainDefinitionMap.put("/v2/**", "anon");
+        filterChainDefinitionMap.put("/swagger-resources/**", "anon");
+
         // 添加自己的过滤器并且取名为jwt
         Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
         //如果cloudServer为空 则说明是单体 需要加载跨域配置

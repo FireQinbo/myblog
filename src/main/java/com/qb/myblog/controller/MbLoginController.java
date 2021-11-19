@@ -1,5 +1,6 @@
 package com.qb.myblog.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.qb.myblog.constant.CommonConstant;
 import com.qb.myblog.dto.MbUserDto;
 import com.qb.myblog.entity.MbUser;
@@ -20,6 +21,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,38 +46,34 @@ public class MbLoginController {
 
     @ApiOperation("登录")
     @GetMapping("/login")
-    public ResultVo<Object> login(@Valid @RequestBody MbUserDto mbUserDto) {
-        ResultVo<Object> resultVo = new ResultVo<>();
+    public ResultVo<?> login(@Valid @RequestBody MbUserDto mbUserDto) {
+        JSONObject jsonObject = new JSONObject();
         MbUser mbUser = mbUserService.getMbUserByMobile(mbUserDto.getMobile());
         if (mbUser == null) {
-            resultVo.failure("用户不存在！", null);
-            return resultVo;
+            return ResultVo.failure("用户不存在！", null);
         }
         //设置hash算法迭代次数
         int times = 2;
         String checkPwd = new SimpleHash("md5", mbUserDto.getPassword(), mbUser.getSalt(), times).toString();
         if (!checkPwd.equals(mbUser.getPassword())) {
-            resultVo.failure("密码错误！", null);
-            return resultVo;
+            return ResultVo.failure("密码错误！", null);
         }
 
         //获取token
         String token = JWTUtil.sign(mbUserDto.getMobile(), mbUser.getPassword());
         //缓存token 一小时后失效
         redisUtil.set(CommonConstant.PREFIX_TOKEN + token, token, 3600);
+        jsonObject.put("token", token);
 
-        resultVo.success("登录成功！", token);
-        return resultVo;
+        return ResultVo.success("登录成功！", jsonObject);
     }
 
     @ApiOperation("注册")
     @PostMapping("/register")
-    public ResultVo<Object> register(@Valid @RequestBody MbUserDto mbUserDto) {
-        ResultVo<Object> resultVo = new ResultVo<>();
+    public ResultVo<?> register(@Valid @RequestBody MbUserDto mbUserDto) {
         MbUser mbUserDb = mbUserService.getMbUserByMobile(mbUserDto.getMobile());
         if (mbUserDb != null) {
-            resultVo.failure("该手机号已注册！", null);
-            return resultVo;
+            return ResultVo.failure("该手机号已注册！", null);
         }
 
         //利用shiro自带的SecureRandomNumberGenerator 生成盐值，默认16位
@@ -93,12 +91,19 @@ public class MbLoginController {
 
         try {
             mbUserService.register(mbUser);
-            resultVo.success("注册成功，请登录！", null);
+            return ResultVo.success("注册成功，请登录！", null);
         } catch (Exception e) {
-            resultVo.failure("注册失败！", e.getMessage());
+            return ResultVo.failure("注册失败！", e.getMessage());
         }
+    }
 
-        return resultVo;
+    @ApiOperation(value = "修改用户")
+    @PostMapping("/modifyUser")
+    public ResultVo<?> modifyUser(@RequestBody MbUser user) {
+        MbUser mbUser = mbUserService.getById(user.getId());
+        BeanUtils.copyProperties(user, mbUser);
+        mbUserService.updateById(mbUser);
+        return ResultVo.success("修改成功！", null);
     }
 
 
@@ -111,7 +116,6 @@ public class MbLoginController {
     public ResultVo<Object> testRole() {
         ResultVo<Object> resultVo = new ResultVo<>();
 
-        resultVo.success("进入成功！", null);
 
         return resultVo;
     }
@@ -125,8 +129,6 @@ public class MbLoginController {
     @GetMapping("/testPermission")
     public ResultVo<Object> testPermission() {
         ResultVo<Object> resultVo = new ResultVo<>();
-
-        resultVo.success("进入成功！", null);
 
         return resultVo;
     }

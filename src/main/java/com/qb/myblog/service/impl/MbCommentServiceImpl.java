@@ -55,6 +55,7 @@ public class MbCommentServiceImpl extends ServiceImpl<MbCommentMapper, MbComment
     public void addComment(MbCommentDto mbCommentDto) {
         MbComment mbComment = new MbComment();
         BeanUtils.copyProperties(mbCommentDto, mbComment);
+        mbComment.setUserId("1");
         mbCommentMapper.insert(mbComment);
     }
 }

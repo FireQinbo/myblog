@@ -4,6 +4,8 @@ package com.qb.myblog.controller;
 import com.qb.myblog.entity.MbArticle;
 import com.qb.myblog.service.IMbArticleService;
 import com.qb.myblog.vo.ResultVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,25 +25,23 @@ import java.util.List;
 //@CrossOrigin(origins = "http://localhost:8080",maxAge = 3600)
 @RestController
 @RequestMapping("/mb")
+@Api(tags = "文章")
 public class MbArticleController {
     @Autowired
     private IMbArticleService mbArticleService;
 
+    @ApiOperation(value = "列表")
     @GetMapping("/getArticles")
-    public ResultVo<List<MbArticle>> getArticles() {
-        ResultVo<List<MbArticle>> resultVo = new ResultVo<>();
+    public ResultVo<?> getArticles() {
         List<MbArticle> mbArticleList = mbArticleService.list();
-        resultVo.success("操作成功！", mbArticleList);
-        return resultVo;
+        return ResultVo.success("操作成功！", mbArticleList);
     }
 
+    @ApiOperation(value = "根据id获取文章")
     @GetMapping("/getArticleById/{id}")
-    public ResultVo<MbArticle> getArticleById(@PathVariable("id") String id) {
-        ResultVo<MbArticle> resultVo = new ResultVo<>();
+    public ResultVo<?> getArticleById(@PathVariable("id") String id) {
         MbArticle mbArticle = mbArticleService.getById(id);
-        resultVo.success("操作成功！", mbArticle);
-
-        return resultVo;
+        return ResultVo.success("操作成功！", mbArticle);
     }
 
 }

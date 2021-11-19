@@ -2,6 +2,8 @@ package com.qb.myblog.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -40,13 +42,13 @@ public class MbComment implements Serializable {
     private Integer approveState;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     @ApiModelProperty(value = "创建者")
     private String createBy;
 
     @ApiModelProperty(value = "更新时间")
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
     @ApiModelProperty(value = "更新者")
     private String updateBy;

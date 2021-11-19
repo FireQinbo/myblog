@@ -7,6 +7,8 @@ import com.qb.myblog.dto.MbCommentDto;
 import com.qb.myblog.entity.MbComment;
 import com.qb.myblog.service.IMbCommentService;
 import com.qb.myblog.vo.ResultVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +27,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/mb")
 @Validated
+@Api(tags = "评论")
 public class MbCommentController {
     @Autowired
     private IMbCommentService mbCommentService;
 
+    @ApiOperation(value = "根据文章id获取评论")
     @GetMapping("/getCommentsByArticleId/{articleId}")
     public ResultVo<JSONObject> getCommentsByArticleId(@PathVariable("articleId") String articleId, @RequestParam("pageIndex") Integer pageIndex) {
         ResultVo<JSONObject> resultVo = new ResultVo<>();
@@ -36,16 +40,15 @@ public class MbCommentController {
         IPage<MbComment> mbCommentPage = mbCommentService.getCommentsByArticleId(articleId,pageIndex);
         jsonObj.put("total", mbCommentPage.getTotal());
         jsonObj.put("data", mbCommentPage.getRecords());
-        resultVo.success("操作成功！", jsonObj);
+        resultVo.setResult(jsonObj);
         return resultVo;
     }
 
+    @ApiOperation(value = "添加评论")
     @PostMapping("/addComment")
-    public ResultVo<Object> addComment(@Valid @RequestBody MbCommentDto mbCommentDto) {
-        ResultVo<Object> resultVo = new ResultVo<>();
+    public ResultVo<?> addComment(@Valid @RequestBody MbCommentDto mbCommentDto) {
         mbCommentService.addComment(mbCommentDto);
-        resultVo.success("添加成功！", null);
-        return resultVo;
+        return ResultVo.success("添加成功！", null);
     }
 }
 

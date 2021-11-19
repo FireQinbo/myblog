@@ -23,9 +23,9 @@ import java.util.List;
 @Slf4j
 public class GlobalException extends RuntimeException{
     @ExceptionHandler(Exception.class)
-    public ResultVo<T> handleException(Exception e) {
+    public ResultVo.ExceptionResultVo handleException(Exception e) {
         log.error(e.getMessage(), e);
-        return new ResultVo().failure("Exception异常", e.getMessage());
+        return ResultVo.ExceptionResultVo.exception(e, e.getMessage());
     }
 
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
