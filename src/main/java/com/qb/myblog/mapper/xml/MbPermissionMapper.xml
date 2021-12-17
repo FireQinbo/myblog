@@ -4,35 +4,33 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.qb.myblog.entity.MbPermission">
-        <id column="id" property="id" />
-        <result column="desc" property="desc" />
-        <result column="create_time" property="createTime" />
-        <result column="create_by" property="createBy" />
-        <result column="update_time" property="updateTime" />
-        <result column="update_by" property="updateBy" />
+        <id column="id" property="id"/>
+        <result column="desc" property="desc"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, desc, create_time, create_by, update_time, update_by
+        id
+        , desc, create_time, create_by, update_time, update_by
     </sql>
 
     <!--获取角色权限-->
     <select id="getRolePermissions" resultType="java.lang.String">
-        SELECT
-            t.permission_code
-        FROM
-            mb_permission t
-        WHERE
-                t.id IN (
-                SELECT
-                    a.id
-                FROM
-                    mb_role_permission a
-                        LEFT JOIN mb_role b ON a.role_id = b.id
-                WHERE
-                        b.id IN ( SELECT c.role_id FROM mb_user_role c LEFT JOIN mb_user d ON c.user_id = d.id WHERE d.id = #{userId} )
-            )
+        SELECT t.permission_code
+        FROM mb_permission t
+        WHERE t.id IN (
+            SELECT a.id
+            FROM mb_role_permission a
+                     LEFT JOIN mb_role b ON a.role_id = b.id
+            WHERE b.id IN (SELECT c.role_id
+                           FROM mb_user_role c
+                                    LEFT JOIN mb_user d ON c.user_id = d.id
+                           WHERE d.id = #{userId})
+        )
     </select>
 
 </mapper>

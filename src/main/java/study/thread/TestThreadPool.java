@@ -1,6 +1,5 @@
 package study.thread;
 
-import sun.net.util.IPAddressUtil;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
