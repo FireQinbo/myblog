@@ -1,6 +1,5 @@
 package com.qb.myblog.config;
 
-import com.qb.myblog.constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -43,6 +42,8 @@ public class ShiroConfig {
         // 拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 
+        filterChainDefinitionMap.put("/saToken/**", "anon");
+        filterChainDefinitionMap.put("/easyPoi/**", "anon");
         // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/mb/**", "anon");
         filterChainDefinitionMap.put("/mb/register", "anon"); //注册接口排除

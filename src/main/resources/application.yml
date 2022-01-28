@@ -1,7 +1,7 @@
 server:
   servlet:
     context-path: /myblog
-  port: 8443
+  port: 8081
 #  httpPort: 8899
   #SSL证书配置（本地）
 #  ssl:
