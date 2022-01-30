@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author qinb
@@ -19,8 +19,8 @@ public class MbUser implements Serializable {
     private String salt;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    private LocalDateTime createTime;
     private String createBy;
-    private Date updateTime;
+    private LocalDateTime updateTime;
     private String updateBy;
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -32,13 +32,13 @@ public class MbRolePermission implements Serializable {
     private String permissionId;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDate createTime;
+    private LocalDateTime createTime;
 
     @ApiModelProperty(value = "创建者")
     private String createBy;
 
     @ApiModelProperty(value = "更新时间")
-    private LocalDate updateTime;
+    private LocalDateTime updateTime;
 
     @ApiModelProperty(value = "更新者")
     private String updateBy;
