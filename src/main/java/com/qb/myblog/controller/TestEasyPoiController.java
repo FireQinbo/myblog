@@ -117,13 +117,18 @@ public class TestEasyPoiController {
         }
         ExportParams params = new ExportParams("订单信息", "订单信息", ExcelType.XSSF);
         //导出时排除一些字段
-        params.setExclusions(new String[]{"ID"});
+        params.setExclusions(new String[]{"ID", "手机号"});
         modelMap.put(NormalExcelConstants.DATA_LIST, orderList);
         modelMap.put(NormalExcelConstants.CLASS, Order.class);
         modelMap.put(NormalExcelConstants.PARAMS, params);
         modelMap.put(NormalExcelConstants.FILE_NAME, "订单列表");
         PoiBaseView.render(modelMap, request, response, NormalExcelConstants.EASYPOI_EXCEL_VIEW);
 
+
         return ResultVo.success("导出成功！", null);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Runtime.getRuntime().availableProcessors() = " + Runtime.getRuntime().availableProcessors());
     }
 }

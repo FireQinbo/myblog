@@ -25,11 +25,11 @@ public class Member {
     private String password;
     @Excel(name = "昵称", width = 20, needMerge = true)
     private String nickname;
-    @Excel(name = "出生日期", width = 20, format = "yyyy-MM-dd")
+    @Excel(name = "出生日期", width = 20, needMerge = true, format = "yyyy-MM-dd")
     private LocalDate birthday;
     @Excel(name = "手机号", width = 20, needMerge = true, desensitizationRule = "3_4")
     private String phone;
     private String icon;
-    @Excel(name = "性别", width = 10, replace = {"男_0", "女_1"})
+    @Excel(name = "性别", width = 10, needMerge = true, replace = {"男_0", "女_1"})
     private Integer gender;
 }
