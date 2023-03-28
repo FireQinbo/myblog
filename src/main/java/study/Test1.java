@@ -18,8 +18,8 @@ import java.util.concurrent.ExecutionException;
 @Slf4j(topic = "c.Test1")
 public class Test1 {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        //dev-开发分支提交
 
+        //master修改
         String a = "123";
         System.out.println("a = " + a);
         Test1.m1(a);
@@ -27,15 +27,17 @@ public class Test1 {
 
         int tenantId = 1;
 
-        if (tenantId == 1) {
+        //master修改
+        String str = "1";
+        if ("1".equals(str)) {
             Map<String, Integer> map1 = new HashMap<>();
             map1.put("1", 123);
             System.out.println("map1 = " + map1);
             Test1.m2(map1);
             System.out.println("map1 = " + map1);
-        } else {
-            System.out.println("tenantId = " + tenantId);
         }
+
+        //master新增逻辑
     }
 
     public static void m1(String a) {
