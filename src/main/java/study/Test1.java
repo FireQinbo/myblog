@@ -23,11 +23,15 @@ public class Test1 {
         Test1.m1(a);
         System.out.println("a = " + a);
 
-        Map<String, Integer> map1 = new HashMap<>();
-        map1.put("1", 123);
-        System.out.println("map1 = " + map1);
-        Test1.m2(map1);
-        System.out.println("map1 = " + map1);
+        int tenantId = Integer.parseInt(a);
+        //master分支修改
+        if (1 == 1) {
+            Map<String, Integer> map1 = new HashMap<>();
+            map1.put("1", 123);
+            System.out.println("map1 = " + map1);
+            Test1.m2(map1);
+            System.out.println("map1 = " + map1);
+        }
     }
 
     public static void m1(String a) {
