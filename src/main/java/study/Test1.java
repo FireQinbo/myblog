@@ -25,18 +25,24 @@ public class Test1 {
         Test1.m1(a);
         System.out.println("a = " + a);
 
-        Map<String, Integer> map1 = new HashMap<>();
-        map1.put("1", 123);
-        System.out.println("map1 = " + map1);
-        Test1.m2(map1);
-        System.out.println("map1 = " + map1);
+        int tenantId = 1;
+
+        if (tenantId == 1) {
+            Map<String, Integer> map1 = new HashMap<>();
+            map1.put("1", 123);
+            System.out.println("map1 = " + map1);
+            Test1.m2(map1);
+            System.out.println("map1 = " + map1);
+        } else {
+            System.out.println("tenantId = " + tenantId);
+        }
     }
 
     public static void m1(String a) {
         a = "456";
     }
 
-    public static void m2(Map<String,Integer> map1) {
+    public static void m2(Map<String, Integer> map1) {
 //        map1.put("1", 456);
         map1 = new HashMap<>();
         map1.put("1", 456);
