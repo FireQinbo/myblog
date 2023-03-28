@@ -28,30 +28,43 @@ sa-token:
 
 spring:
   datasource:
-    username: root
-    password: '@Qinbo.903520'
-    url: jdbc:mysql://113.31.124.33:3306/myblog?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.jdbc.Driver
+    # 使用阿里巴巴的Druid数据库连接池
     type: com.alibaba.druid.pool.DruidDataSource
-    #备注
-    filters: stat,wall,log4j
-    initialSize: 5
-    minIdle: 5
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: false
-    maxPoolPreparedStatementPerConnectionSize: 20
-    connectionProperties:
+    # 连接池的配置信息
+    # 初始化大小，最小，最大连接数
+    # 配置获取连接等待超时的时间
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是ms
+    # Destory线程中如果检测到当前连接的最后活跃时间和当前时间的差值大于
+    # minEvictableIdleTimeMillis，则关闭当前连接。单位是ms
+    # 用来检测连接是否有效的sql，要求是一个查询语句。
+    #建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+    # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    # 配置监控统计拦截的filters，监控统计用的stat、日志用的log4j、 防御sql注入的wall
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    url: jdbc:mysql://113.31.124.33:3306/myblog?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: "@Qinbo.903520"
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      min-idle: 5
+      max-active: 10
+      initial-size: 10
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      use-global-data-source-stat: true
+      max-pool-prepared-statement-per-connection-size: 20
+    dynamic:
       druid:
-        stat:
-          mergeSql: true
-          slowSqlMillis: 5000
+        filters: stat,wall,slf4j
   redis:
       database: 0
       host: 113.31.124.33
