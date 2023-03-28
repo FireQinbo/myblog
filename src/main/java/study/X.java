@@ -29,6 +29,6 @@ public class X extends Thread implements Runnable {
     }
 
     public static void main(String[] args) {
-
+        System.out.println("this is run()");
     }
 }
