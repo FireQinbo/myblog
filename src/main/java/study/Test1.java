@@ -27,6 +27,11 @@ public class Test1 {
 
         int tenantId = 1;
 
+        //dev-开发分支提交
+        if (1 == 1) {
+            System.out.println("tenantId = " + tenantId);
+        }
+
         if (tenantId == 1) {
             Map<String, Integer> map1 = new HashMap<>();
             map1.put("1", 123);
